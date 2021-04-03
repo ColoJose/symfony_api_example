@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: ./build/nginx.Dockerfile
+    ports:
+      - '8080:80'
+  app:
+    build:
+      context: .
+      dockerfile: ./build/php.Dockerfile
+    environment:
+      APP_ENV: dev
+    volumes:
+      - './:/var/www/html'
+  db:
+    image: mysql:5.7
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_DATABASE: symfony_db
+      MYSQL_USER: symfony_user
+      MYSQL_PASSWORD: symfony_pass
+      MYSQL_RANDOM_ROOT_PASSWORD: 'true'
