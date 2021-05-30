@@ -11,6 +11,7 @@ Open a terminal and type (or copy) the following command on the project director
 
 ```shell
 docker-compose -up --build
+docker exec symfony_app composer install --no-interaction
 ```
 
 Go to browser and put `localhost:8080/test` and you should a message saying "It works"
