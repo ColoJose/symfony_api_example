@@ -2,12 +2,14 @@ version: '3'
 
 services:
   webserver:
+    container_name: webserver
     build:
       context: .
       dockerfile: ./build/nginx.Dockerfile
     ports:
       - '8080:80'
   app:
+    container_name: symfony_app
     build:
       context: .
       dockerfile: ./build/php.Dockerfile
@@ -16,6 +18,7 @@ services:
     volumes:
       - './:/var/www/html'
   db:
+    container_name: db
     image: mysql:5.7
     ports:
       - '3307:3306'
