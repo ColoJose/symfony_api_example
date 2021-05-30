@@ -12,5 +12,3 @@ RUN wget https://getcomposer.org/download/2.0.2/composer.phar -O composer.phar -
 
 COPY . .
 
-RUN composer install --no-interaction
-
