@@ -21,37 +21,32 @@ abstract class Property
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $street;
+    protected $street;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $number;
+    protected $number;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $zipCode;
+    protected $zipCode;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $sqm;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $hasGarden;
+    protected $sqm;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Location;
+    protected $location;
 
     public function getId(): ?int
     {
@@ -106,26 +101,14 @@ abstract class Property
         return $this;
     }
 
-    public function getHasGarden(): ?bool
-    {
-        return $this->hasGarden;
-    }
-
-    public function setHasGarden(bool $hasGarden): self
-    {
-        $this->hasGarden = $hasGarden;
-
-        return $this;
-    }
-
     public function getLocation(): ?string
     {
-        return $this->Location;
+        return $this->location;
     }
 
-    public function setLocation(string $Location): self
+    public function setLocation(string $location): self
     {
-        $this->Location = $Location;
+        $this->location = $location;
 
         return $this;
     }
@@ -135,3 +118,4 @@ abstract class Property
         return $this->getStreet() . " " . $this->getNumber() . ", " . $this->getLocation();
     }
 }
+
