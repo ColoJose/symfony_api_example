@@ -31,5 +31,16 @@ class PropertyController
         );
         return JsonResponse::fromJsonString($serializedProperties);
     }
+
+    /**
+     * @Route("/{id}", name="property", methods={"GET"})
+     */
+    public function getProperty(int $id,PropertyRepository $propertyRepository) {
+        $property = $this->serializer->serialize(
+            $propertyRepository->find($id),
+            'json'
+        );
+        return JsonResponse::fromJsonString($property);
+    }
 }
 
