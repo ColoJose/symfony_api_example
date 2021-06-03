@@ -20,11 +20,6 @@ class Flat extends Property
      */
     private $isLoft;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getAcceptPets(): ?bool
     {
         return $this->acceptPets;
@@ -49,3 +44,4 @@ class Flat extends Property
         return $this;
     }
 }
+

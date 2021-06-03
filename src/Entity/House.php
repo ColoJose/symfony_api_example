@@ -10,12 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class House extends Property
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
     /**
      * @ORM\Column(type="integer")
@@ -73,3 +67,4 @@ class House extends Property
         return $this;
     }
 }
+
