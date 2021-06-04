@@ -4,6 +4,8 @@
 namespace App\Controller;
 
 use App\Repository\PropertyRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -13,34 +15,41 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @package App\Controller
  * @Route("/property")
  */
-class PropertyController
+class PropertyController extends AbstractController
 {
     private $serializer;
+    private $entityManager;
+    private $propertyRepository;
 
-    public function __construct(SerializerInterface $serializer) {
+    public function __construct(SerializerInterface $serializer,
+                                EntityManagerInterface $entityManager,
+                                PropertyRepository $propertyRepository) {
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
+        $this->propertyRepository = $propertyRepository;
     }
 
     /**
      * @Route("/", name="all_properties", methods={"GET"})
      */
-    public function getAllProperties(PropertyRepository $propertyRepository): JsonResponse {
+    public function getAllProperties(): JsonResponse {
         $serializedProperties = $this->serializer->serialize(
-            $propertyRepository->findAll(),
+            $this->propertyRepository->findAll(),
             'json'
         );
         return JsonResponse::fromJsonString($serializedProperties);
     }
 
     /**
-     * @Route("/{id}", name="property", methods={"GET"})
+     * @Route("/{id}", name="get_property", methods={"GET"})
      */
-    public function getProperty(int $id,PropertyRepository $propertyRepository) {
+    public function getProperty(int $id) {
         $property = $this->serializer->serialize(
-            $propertyRepository->find($id),
+            $this->propertyRepository->find($id),
             'json'
         );
         return JsonResponse::fromJsonString($property);
     }
+
 }
 
