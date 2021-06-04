@@ -51,5 +51,14 @@ class PropertyController extends AbstractController
         return JsonResponse::fromJsonString($property);
     }
 
+    /**
+     * @Route("/{id}", name="del_property", methods={"DELETE"})
+     */
+    public function deleteProperty(int $id) {
+        $property = $this->propertyRepositoryDos->find($id);
+        $this->entityManager->remove($property);
+        $this->entityManager->flush();
+        return new JsonResponse('it workds');
+    }
 }
 
