@@ -32,7 +32,7 @@ class PropertyController extends ApiController
     }
 
     /**
-     * @Route("/", name="all_properties", methods={"GET"})
+     * @Route("", name="all_properties", methods={"GET"})
      */
     public function getAllProperties(): JsonResponse {
         $serializedProperties = $this->serializer->serialize(
@@ -91,7 +91,7 @@ class PropertyController extends ApiController
     }
 
     /**
-     * @Route("/", name="create_property", methods={"POST"})
+     * @Route("", name="create_property", methods={"POST"})
      */
     public function create(Request $request): Response {
         $property_type = $request->query->get('type');
