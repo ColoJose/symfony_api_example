@@ -62,7 +62,7 @@ class PropertyController extends ApiController
     /**
      * @Route("/{id}", name="del_property", methods={"DELETE"})
      */
-    public function deleteProperty(int $id): Response {
+    public function delete(int $id): Response {
         $property = $this->propertyRepository->find($id);
 
         if (!$property) {
@@ -77,9 +77,8 @@ class PropertyController extends ApiController
     /**
      * @Route("/{id}", name="update_property", methods={"PUT"})
      */
-    public function updateProperty(int $id, Request $request): Response {
+    public function update(int $id, Request $request): Response {
         $property = $this->propertyRepository->find($id);
-
         if (!$property) {
             return $this->resourceNotFound($id);
         }
