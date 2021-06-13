@@ -7,6 +7,8 @@ use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -54,11 +56,34 @@ class PropertyController extends AbstractController
     /**
      * @Route("/{id}", name="del_property", methods={"DELETE"})
      */
-    public function deleteProperty(int $id) {
-        $property = $this->propertyRepositoryDos->find($id);
+    public function deleteProperty(int $id): JsonResponse {
+        $property = $this->propertyRepository->find($id);
         $this->entityManager->remove($property);
         $this->entityManager->flush();
-        return new JsonResponse('it workds');
+        return new JsonResponse('Property removed successfully ');
+    }
+
+    /**
+     * @Route("/{id}", name="update_property", methods={"PUT"})
+     */
+    public function updateProperty(int $id, Request $request): JsonResponse {
+        $property = $this->propertyRepository->find($id);
+        $data_decode = $request->toArray();
+        $this->propertyRepository->update($property,$data_decode);
+
+        return new JsonResponse("Successfully updated", 200);
+    }
+
+    /**
+     * @Route("/", name="create_property", methods={"POST"})
+     */
+    public function create(Request $request): Response {
+        $property_type = $request->query->get('type');
+        $data_decode = $request->toArray();
+
+        $this->propertyRepository->create($property_type, $data_decode);
+
+        return new Response("Succesfully Created", Response::HTTP_CREATED);
     }
 }
 
