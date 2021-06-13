@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @package App\Controller
  * @Route("/property")
  */
-class PropertyController extends AbstractController
+class PropertyController extends ApiController
 {
     private $serializer;
     private $entityManager;
@@ -46,6 +46,12 @@ class PropertyController extends AbstractController
      * @Route("/{id}", name="get_property", methods={"GET"})
      */
     public function getProperty(int $id) {
+        $property = $this->propertyRepository->find($id);
+
+        if (!$property) {
+            return $this->resourceNotFound($id);
+        }
+
         $property = $this->serializer->serialize(
             $this->propertyRepository->find($id),
             'json'
@@ -56,8 +62,13 @@ class PropertyController extends AbstractController
     /**
      * @Route("/{id}", name="del_property", methods={"DELETE"})
      */
-    public function deleteProperty(int $id): JsonResponse {
+    public function deleteProperty(int $id): Response {
         $property = $this->propertyRepository->find($id);
+
+        if (!$property) {
+            return $this->resourceNotFound($id);
+        }
+
         $this->entityManager->remove($property);
         $this->entityManager->flush();
         return new JsonResponse('Property removed successfully ');
@@ -66,8 +77,13 @@ class PropertyController extends AbstractController
     /**
      * @Route("/{id}", name="update_property", methods={"PUT"})
      */
-    public function updateProperty(int $id, Request $request): JsonResponse {
+    public function updateProperty(int $id, Request $request): Response {
         $property = $this->propertyRepository->find($id);
+
+        if (!$property) {
+            return $this->resourceNotFound($id);
+        }
+
         $data_decode = $request->toArray();
         $this->propertyRepository->update($property,$data_decode);
 
