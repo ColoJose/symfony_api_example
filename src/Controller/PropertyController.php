@@ -32,6 +32,19 @@ class PropertyController extends ApiController
     }
 
     /**
+     * @Route("",
+     *        name="filter_properties",
+     *        methods={"GET"},
+     *        condition="request.query.get('location')"
+     * )
+     */
+    public function filterByLocation(Request $request) {
+        $properties = $this->propertyRepository->findBy(['location' => $request->query->get('location')]);
+        $serialzedProperties = $this->serializer->serialize($properties, 'json');
+        return JsonResponse::fromJsonString($serialzedProperties);
+    }
+
+    /**
      * @Route("", name="all_properties", methods={"GET"})
      */
     public function getAllProperties(): JsonResponse {
@@ -100,5 +113,7 @@ class PropertyController extends ApiController
 
         return new Response("Succesfully Created", Response::HTTP_CREATED);
     }
+
+
 }
 
