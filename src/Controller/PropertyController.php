@@ -47,7 +47,7 @@ class PropertyController extends ApiController
     /**
      * @Route("", name="all_properties", methods={"GET"})
      */
-    public function getAllProperties(): JsonResponse {
+    public function getAll(): JsonResponse {
         $serializedProperties = $this->serializer->serialize(
             $this->propertyRepository->findAll(),
             'json'
