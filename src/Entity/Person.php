@@ -12,10 +12,10 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  * @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"owner" = "Owner", "tenant" = "Tenant"})
+ * @DiscriminatorMap({"tenant" = "Tenant"})
  */
 
-class Person {
+abstract class Person {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
