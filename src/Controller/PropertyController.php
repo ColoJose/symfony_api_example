@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Property;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,16 +20,11 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class PropertyController extends ApiController
 {
-    private $serializer;
-    private $entityManager;
     private $propertyRepository;
 
-    public function __construct(SerializerInterface $serializer,
-                                EntityManagerInterface $entityManager,
-                                PropertyRepository $propertyRepository) {
-        $this->serializer = $serializer;
-        $this->entityManager = $entityManager;
-        $this->propertyRepository = $propertyRepository;
+    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer) {
+        parent::__construct($em, $serializer);
+        $this->propertyRepository = $this->em->getRepository(Property::class);
     }
 
     /**
