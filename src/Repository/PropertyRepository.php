@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Flat;
 use App\Entity\House;
 use App\Entity\Property;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,41 +13,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Property[]    findAll()
  * @method Property[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PropertyRepository extends ServiceEntityRepository
+class PropertyRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Property::class);
     }
 
-    // /**
-    //  * @return Property[] Returns an array of Property objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Property
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
     public function update(Property $property, $data_decode )
     {
         /**
@@ -64,8 +35,7 @@ class PropertyRepository extends ServiceEntityRepository
         if (isset($number)) { $property->setNumber($number); };
         if (isset($zipCode)) { $property->setZipCode($zipCode); };
 
-        $this->getEntityManager()->persist($property);
-        $this->getEntityManager()->flush();
+        $this->insert($property);
     }
 
     public function create(string $propertyType, $data) {
@@ -73,14 +43,24 @@ class PropertyRepository extends ServiceEntityRepository
         if ($propertyType == 'house') { $this->createHouse($data); };
     }
 
+    /**
+     * @param $data
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function createFlat($data) {
         $house = new Flat();
         $this->setCommonProperties($house, $data);
         $house->setIsLoft($data['isLoft']);
         $house->setAcceptPets($data['acceptPets']);
-        $this->persist($house);
+        $this->insert($house);
     }
 
+    /**
+     * @param $data
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function createHouse($data) {
         $house = new House();
         $this->setCommonProperties($house, $data);
@@ -89,7 +69,7 @@ class PropertyRepository extends ServiceEntityRepository
         if ($data['hasGarden']) {
             $house->setGardenSqm($data['gardenSqm']);
         }
-        $this->persist($house);
+        $this->insert($house);
     }
 
     private function setCommonProperties($property, $data) {
@@ -101,10 +81,5 @@ class PropertyRepository extends ServiceEntityRepository
         }
         $property->setSqm($data['sqm']);
         $property->setLocation($data['location']);
-    }
-
-    public function persist(Property $property) {
-        $this->getEntityManager()->persist($property);
-        $this->getEntityManager()->flush();
     }
 }
