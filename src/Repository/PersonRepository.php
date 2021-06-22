@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Constant;
 use App\Entity\Person;
+use App\Entity\Rental;
+use App\Entity\Tenant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,39 +15,56 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Person[]    findAll()
  * @method Person[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PersonRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
+class PersonRepository extends ServiceEntityRepository {
+
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Person::class);
     }
 
-    // /**
-    //  * @return Person[] Returns an array of Person objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function create(string $type, $data) {
+        if ( $type == Constant::VALID_TYPE_PERSON[0]) {
+            $this->createTenant($data);
+        }
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Person
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+    private function createTenant($data) {
+        $tenant = new Tenant();
+        $this->setCommonProperties($tenant, $data);
+        $rental = $this->createRental($data['rental']);
+        $tenant->setRental($rental);
+
+        $this->insert($tenant);
     }
-    */
+
+    /**
+     * Set the properties which are common to any subclass of Person
+     * @param $person
+     * @param $data
+     */
+    private function setCommonProperties($person, $data) {
+        /** @var Person $person */
+        $person->setName($data['name']);
+        $person->setSurname($data['surname']);
+
+        if (isset($data['phone'])) {
+            $person->setPhone($data['phone']);
+        }
+    }
+
+    private function createRental($data) {
+        $rental = new Rental();
+        $rental->setStartContract(
+            new \DateTime($data['start_contract'])
+        );
+        $rental->setEndContract(
+            new \DateTime($data['end_contract'])
+        );
+        return $rental;
+    }
+
+    private function insert(Tenant $tenant) {
+        $this->getEntityManager()->persist($tenant);
+        $this->getEntityManager()->flush();
+    }
 }
+
