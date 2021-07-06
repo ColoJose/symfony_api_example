@@ -10,17 +10,21 @@ use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class GeneralErrorResponse {
+abstract class GeneralErrorResponse {
 
     public const DEFAULT_CONTENT_TYPE = 'application/problem';
 
-    public function __construct() {}
+    abstract protected function setType();
+    abstract protected function setTitle();
+    abstract protected function getErrorName();
+    abstract protected function getErrorContent(mixed $errorContent);
 
-    public function make(string $type, string $title, string $format='json', int $statusCode = 400): Response {
+    public function make(mixed $errorContent, string $format='json', int $statusCode = 400): Response {
         $response = new JsonResponse([
-            "type" => $type,
-            "title" => $title,
-            "status" => $statusCode
+            "type" => $this->setType(),
+            "title" => $this->setTitle(),
+            "status" => $statusCode,
+            $this->getErrorName() => $this->getErrorContent($errorContent)
         ]);
 
         $response->headers->set('Content-Type', sprintf('%s+%s', self::DEFAULT_CONTENT_TYPE, $format));
