@@ -32,7 +32,7 @@ class MissingFieldErrorResponseTest extends KernelTestCase {
     /**
      * @test
      */
-    public function givenAFormat_whenMakeIsCallen_thenContentTypeShouldBeApplicationProblemPlusThisFormat() {
+    public function givenAFormat_whenMakeIsCalled_thenContentTypeShouldBeApplicationProblemPlusThisFormat() {
         $expectedFormat = 'xml';
         $missingFieldsErrorResponse = (new MissingFieldErrorResponse())->make($this->errorContent, $expectedFormat);
         $this->assertEquals(sprintf('application/problem+%s', $expectedFormat), $missingFieldsErrorResponse->headers->get('Content-Type'));
