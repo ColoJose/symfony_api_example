@@ -14,10 +14,10 @@ abstract class GeneralErrorResponse {
 
     public const DEFAULT_CONTENT_TYPE = 'application/problem';
 
-    abstract protected function setType();
-    abstract protected function setTitle();
-    abstract protected function getErrorName();
-    abstract protected function getErrorContent(mixed $errorContent);
+    abstract protected function setType(): string;
+    abstract protected function setTitle(): string;
+    abstract protected function getErrorName(): string;
+    abstract protected function getErrorContent(mixed $errorContent): mixed;
 
     public function make(mixed $errorContent, string $format='json', int $statusCode = 400): Response {
         $response = new JsonResponse([
