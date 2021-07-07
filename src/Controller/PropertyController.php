@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * Class PropertyController
@@ -105,7 +106,11 @@ class PropertyController extends ApiController
         $property_type = $request->query->get('type');
         $data_decode = $request->toArray();
 
-        $this->propertyRepository->create($property_type, $data_decode);
+        $result = $this->propertyRepository->create($property_type, $data_decode);
+
+        if ($result instanceof ConstraintViolationList) {
+            return new Response('Invalid data');
+        }
 
         return new Response("Succesfully Created", Response::HTTP_CREATED);
     }

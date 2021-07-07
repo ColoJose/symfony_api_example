@@ -6,6 +6,8 @@ use App\Entity\Flat;
 use App\Entity\House;
 use App\Entity\Property;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,9 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PropertyRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private $validator;
+
+    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator)
     {
         parent::__construct($registry, Property::class);
+        $this->validator = $validator;
     }
 
     public function update(Property $property, $data_decode )
@@ -38,28 +44,45 @@ class PropertyRepository extends AbstractRepository
         $this->insert($property);
     }
 
-    public function create(string $propertyType, $data) {
-        if ($propertyType == 'flat') { $this->createFlat($data); };
-        if ($propertyType == 'house') { $this->createHouse($data); };
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function create(string $propertyType, $data): ?ConstraintViolationList {
+        $property = null;
+        if ($propertyType == 'flat') {
+            $property = $this->createFlat($data);
+        }
+        if ($propertyType == 'house') {
+            $property = $this->createHouse($data);
+        }
+
+        $errors = $this->validator->validate($property);
+
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            $this->insert($property);
+            return null;
+        }
     }
 
     /**
      * @param $data
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @return Flat
      */
     private function createFlat($data) {
         $house = new Flat();
         $this->setCommonProperties($house, $data);
         $house->setIsLoft($data['isLoft']);
         $house->setAcceptPets($data['acceptPets']);
-        $this->insert($house);
+
+        return $house;
     }
 
     /**
      * @param $data
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @return House
      */
     private function createHouse($data) {
         $house = new House();
@@ -69,7 +92,8 @@ class PropertyRepository extends AbstractRepository
         if ($data['hasGarden']) {
             $house->setGardenSqm($data['gardenSqm']);
         }
-        $this->insert($house);
+
+        return $house;
     }
 
     private function setCommonProperties($property, $data) {
