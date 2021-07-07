@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\HouseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=HouseRepository::class)
@@ -13,6 +14,7 @@ class House extends Property
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Positive
      */
     private $floors;
 
@@ -23,6 +25,7 @@ class House extends Property
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Positive
      */
     private $gardenSqm;
 

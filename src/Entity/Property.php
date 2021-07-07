@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PropertyRepository::class)
@@ -25,26 +26,31 @@ abstract class Property
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     protected $street;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Positive(message="Number must be positive")
      */
     protected $number;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Positive(message="Zip code must be positive")
      */
     protected $zipCode;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\Positive
      */
     protected $sqm;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     protected $location;
 
