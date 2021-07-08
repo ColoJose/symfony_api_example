@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Helper\ConstraintValidationFailErrorResponse;
 use App\Entity\Property;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -109,7 +110,7 @@ class PropertyController extends ApiController
         $result = $this->propertyRepository->create($property_type, $data_decode);
 
         if ($result instanceof ConstraintViolationList) {
-            return new Response('Invalid data');
+            return (new ConstraintValidationFailErrorResponse())->make($result);
         }
 
         return new Response("Succesfully Created", Response::HTTP_CREATED);
