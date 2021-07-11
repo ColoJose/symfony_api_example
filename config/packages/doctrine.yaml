@@ -1,8 +1,14 @@
 doctrine:
     dbal:
-        override_url: true
-        url: '%env(resolve:DATABASE_URL)%'
-        server_version: '5.7'
+        default_connection: default
+        connections:
+            default:
+                override_url: true
+                url: '%env(resolve:DATABASE_URL)%'
+                server_version: '5.7'
+            debtors_register:
+                url: '%env(resolve:DEBTORS_REGISTER_DATABASE_URL)%'
+                server_version: '5.7'
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
