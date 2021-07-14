@@ -27,6 +27,10 @@ abstract class Property
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
+     * @Assert\Regex(
+     *     pattern="#^[\s\w\.]+$#",
+     *     message="Non alphanumeric characters are not permitted"
+     * )
      */
     protected $street;
 
@@ -38,7 +42,11 @@ abstract class Property
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Positive(message="Zip code must be positive")
+     * @Assert\Range(
+     *     min= 0,
+     *     max= 9999,
+     *     notInRangeMessage="Zip code must be between {{ min }} and {{ max }}"
+     * )
      */
     protected $zipCode;
 
@@ -51,6 +59,10 @@ abstract class Property
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
+     * @Assert\Regex(
+     *     pattern="#^[\s\w\.]+$#",
+     *     message="Non alphanumeric characters are not permitted"
+     * )
      */
     protected $location;
 
