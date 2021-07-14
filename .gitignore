@@ -10,5 +10,10 @@
 # others
 /.idea/
 
+# symfony/phpunit-bridge
+.phpunit.result.cache
+/phpunit.xml
 
-
+# phpunit/phpunit
+/phpunit.xml
+.phpunit.result.cache
