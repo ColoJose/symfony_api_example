@@ -23,7 +23,7 @@ services:
     ports:
       - '3307:3306'
     volumes:
-    - './build/fixtures/:/home'
+    - './build/fixtures/main_db/:/home'
     environment:
       MYSQL_DATABASE: symfony_db
       MYSQL_USER: symfony_user
