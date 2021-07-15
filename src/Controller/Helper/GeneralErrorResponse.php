@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class GeneralErrorResponse {
 
     public const DEFAULT_CONTENT_TYPE = 'application/problem';
+    public const INVALID_STATUS_CODE_MESSAGE = "Status code must begin with 4xx or 5xx";
 
     abstract protected function setType(): string;
     abstract protected function setTitle(): string;
@@ -34,7 +35,7 @@ abstract class GeneralErrorResponse {
 
     private function setStatusCode(int $statusCode, Response $response) {
         if ($statusCode < 400 || $statusCode > 599) {
-            throw new InvalidStatusCodeException(Constant::INVALID_STATUS_CODE_MESSAGE);
+            throw new InvalidStatusCodeException(self::INVALID_STATUS_CODE_MESSAGE);
         }
         $response->setStatusCode($statusCode);
     }
