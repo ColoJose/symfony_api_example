@@ -17,3 +17,7 @@ monolog:
             type: console
             process_psr_3_messages: false
             channels: ["!event", "!doctrine", "!console"]
+        request:
+            type: stream
+            path: "%kernel.logs_dir%/%env(resolve:REQUEST_LOG_FILE)%"
+            level: info
