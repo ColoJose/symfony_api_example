@@ -3,8 +3,6 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -12,11 +10,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 abstract class ApiController extends AbstractController
 {
 
-    protected $em;
     protected $serializer;
 
-    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer) {
-        $this->em = $em;
+    public function __construct(SerializerInterface $serializer) {
         $this->serializer = $serializer;
     }
 
@@ -24,3 +20,4 @@ abstract class ApiController extends AbstractController
         return new Response(sprintf("Resource with id: %d was not found", $id), 404);
     }
 }
+

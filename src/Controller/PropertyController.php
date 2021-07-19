@@ -4,10 +4,7 @@
 namespace App\Controller;
 
 use App\Controller\Helper\ConstraintValidationFailErrorResponse;
-use App\Entity\Property;
-use App\Repository\PropertyRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\PropertyService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,11 +19,11 @@ use Symfony\Component\Validator\ConstraintViolationList;
  */
 class PropertyController extends ApiController
 {
-    private $propertyRepository;
+    private $propertyService;
 
-    public function __construct(EntityManagerInterface $em, SerializerInterface $serializer) {
-        parent::__construct($em, $serializer);
-        $this->propertyRepository = $this->em->getRepository(Property::class);
+    public function __construct(PropertyService $propertyService, SerializerInterface $serializer) {
+        parent::__construct($serializer);
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -36,8 +33,8 @@ class PropertyController extends ApiController
      *        condition="request.query.get('location')"
      * )
      */
-    public function filterByLocation(Request $request) {
-        $properties = $this->propertyRepository->findBy(['location' => $request->query->get('location')]);
+    public function filterByLocation(Request $request): Response {
+        $properties = $this->propertyService->findBy(['location' => $request->query->get('location')]);
         $serialzedProperties = $this->serializer->serialize($properties, 'json');
         return JsonResponse::fromJsonString($serialzedProperties);
     }
@@ -45,9 +42,9 @@ class PropertyController extends ApiController
     /**
      * @Route("", name="all_properties", methods={"GET"})
      */
-    public function getAll(): JsonResponse {
+    public function getAll(): Response {
         $serializedProperties = $this->serializer->serialize(
-            $this->propertyRepository->findAll(),
+            $this->propertyService->findAll(),
             'json'
         );
         return JsonResponse::fromJsonString($serializedProperties);
@@ -56,58 +53,55 @@ class PropertyController extends ApiController
     /**
      * @Route("/{id}", name="get_property", methods={"GET"})
      */
-    public function getProperty(int $id) {
-        $property = $this->propertyRepository->find($id);
+    public function getProperty(int $id): Response {
+        $property = $this->propertyService->find($id);
 
         if (!$property) {
             return $this->resourceNotFound($id);
         }
 
-        $property = $this->serializer->serialize(
-            $this->propertyRepository->find($id),
+        $serializedProperty = $this->serializer->serialize(
+            $property,
             'json'
         );
-        return JsonResponse::fromJsonString($property);
+        return JsonResponse::fromJsonString($serializedProperty);
     }
 
     /**
      * @Route("/{id}", name="del_property", methods={"DELETE"})
      */
     public function delete(int $id): Response {
-        $property = $this->propertyRepository->find($id);
+        $property = $this->propertyService->find($id);
 
         if (!$property) {
             return $this->resourceNotFound($id);
         }
 
-        $this->entityManager->remove($property);
-        $this->entityManager->flush();
-        return new JsonResponse('Property removed successfully ');
+        $this->propertyService->delete($property);
+        return new Response("Property removed successfully");
     }
 
     /**
      * @Route("/{id}", name="update_property", methods={"PUT"})
      */
     public function update(int $id, Request $request): Response {
-        $property = $this->propertyRepository->find($id);
+        $property = $this->propertyService->find($id);
         if (!$property) {
             return $this->resourceNotFound($id);
         }
 
-        $data_decode = $request->toArray();
-        $this->propertyRepository->update($property,$data_decode);
+        $dataDecode = $request->toArray();
+        $this->propertyService->update($property,$dataDecode);
 
-        return new JsonResponse("Successfully updated", 200);
+        return new Response("Successfully updated", 200);
     }
 
     /**
      * @Route("", name="create_property", methods={"POST"})
      */
     public function create(Request $request): Response {
-        $property_type = $request->query->get('type');
-        $data_decode = $request->toArray();
-
-        $result = $this->propertyRepository->create($property_type, $data_decode);
+        $propertyType = $request->query->get('type');
+        $result = $this->propertyService->create($propertyType, $request->toArray());
 
         if ($result instanceof ConstraintViolationList) {
             return (new ConstraintValidationFailErrorResponse())->make($result);
