@@ -36,7 +36,7 @@ You can use `curl` from command line as HTTP client or any other you prefer
 ```shell
 echo '{"street":"W Towers", "number": 2100, "zipCode":1331,"sqm":21.1,"location":"Longhcmps","floors":2,"hasGarden":false}' > create_house.json
 
-curl -X POST --data "/your/path/create_house.json" http://localhost:8080/property?type=house
+curl -X POST --data "@/your/path/create_house.json" http://localhost:8080/property?type=house
 ```
 
 - Filter properties by location
